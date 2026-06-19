@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+import random
 class Character(ABC):
     def __init__(self, name : str, health : int, level : int, inventry=[123]):
         if isinstance(name.strip(),str):
@@ -167,15 +168,55 @@ class Mage(Character):
 
     def __str__(self):
         return f"warrior : {self.name}\nHealth: {self.get_health}\nLevel: {self.get_level}\nMana : {self.get_mana}\nMaximum Mana {self.MAX_MANA}\n"
+    
+class Rogue(Character):
+    def __init__(self, name: str, health: int, level: int):
+        super().__init__(name, health, level)
+        self.__agility = 20
+        self.__stealth = False
 
-fireball = Spell("Fireball", 20, 50)
-ice_bolt = Spell("Ice Bolt", 10, 25)
+    @property
+    def get_agility(self) -> int:
+        return self.__agility
 
-m = Mage("Gandalf", 80, 1)
-m.learn_spell(fireball)
-m.learn_spell(ice_bolt)
+    def is_stealthed(self) -> bool:
+        return self.__stealth
 
-print(m)
-print(m.cast_spell(fireball)) 
-print(m.get_mana)        
-print(fireball.describe())     
+    def take_damage(self, dmg: int):
+        dodge_chance = self.__agility // 10    # agility 20 = 20% dodge
+        if random.randint(1, 100) <= dodge_chance:
+            print(f"{self.get_name()} dodged the attack!")
+            return
+        self.__stealth = False                 # getting hit breaks stealth
+        super().take_damage(dmg)
+
+    def attack(self) -> int:
+        hits = self.__agility // 10            # agility 20 = 2 hits
+        damage_per_hit = 8
+        total = hits * damage_per_hit
+        print(f"{self.name} strikes {hits}x for {total} total damage.")
+        return total
+
+    def sneak(self):
+        self.__stealth = True
+        print(f"{self.name} vanishes into the shadows.")
+
+    def backstab(self) -> int:
+        if not self.__stealth:
+            print("Must be in stealth to backstab!")
+            return 0
+        self.__stealth = False                 # breaks stealth after use
+        critical = 40
+        print(f"{self.name} backstabs for {critical} critical damage!")
+        return critical
+    
+    def __str__(self):
+        return f"warrior : {self.name}\nHealth: {self.get_health}\nLevel: {self.get_level}\nAgilty : {self.get_agility}"
+    
+r = Rogue("Shadow", 75, 1)
+
+print(r.attack())       # 2 hits x 8 = 16 total damage
+r.sneak()               # stealth = True
+print(r.backstab())     # 40 critical damage, stealth = False
+print(r.backstab())     # "Must be in stealth" → returns 0
+r.take_damage(20)       # 20% chance to dodge, else takes 20 damage
