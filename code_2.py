@@ -150,9 +150,6 @@ class Cart:
     def clear_cart(self) -> None:
         self.__items.clear()
 
-
-# ==================== USER INTERFACE ====================
-
 class ShoppingUI:
     """User interface for shopping system"""
     
@@ -208,21 +205,21 @@ class ShoppingUI:
             
             self.products = [p1, p2, p3, d1, d2, d3]
             
-            print("✅ Sample products created!")
+            print("Sample products created!")
             for i, product in enumerate(self.products, 1):
                 print(f"  {i}. {product.name} - ${product.price}")
         except Exception as e:
-            print(f"❌ Error: {e}")
+            print(f"Error: {e}")
     
     def display_products(self):
         """Display all available products"""
         if not self.products:
-            print("❌ No products available. Create sample products first!")
+            print("No products available. Create sample products first!")
             return
         
         print("\n--- AVAILABLE PRODUCTS ---")
         for i, product in enumerate(self.products, 1):
-            product_type = "📦 Physical" if isinstance(product, PhysicalProduct) else "💾 Digital"
+            product_type = "Physical" if isinstance(product, PhysicalProduct) else "Digital"
             print(f"{i}. {product_type} | {product.name} | Price: ${product.price}")
     
     def add_product_to_cart(self):
@@ -362,8 +359,6 @@ class ShoppingUI:
             else:
                 print("❌ Invalid choice! Please try again.")
 
-
-# ==================== MAIN EXECUTION ====================
 
 if __name__ == "__main__":
     app = ShoppingUI()
